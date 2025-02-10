@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef} from 'react'
 
 import './App.css'
 
@@ -7,6 +7,9 @@ function App() {
   const [numberAllowed, setNumberAllowed] = useState(false);
   const [CharacterAllowed, setCharaterAllowed] = useState(false);
   const [password, setPassword] = useState("")
+
+  // In simple terms, useRef is like a box where you can store a value, and React won’t change or re-render your component when the value inside the box changes.
+  const passwordRef = useRef(null)
 //useCallback is a React Hook that helps you remember a function so that it doesn't get recreated every time the component re-renders.
 //                  :::syntax ::: 
 // const cachedFn = useCallback(fn, dependencies)
@@ -26,6 +29,11 @@ function App() {
 
   }, [length, numberAllowed, CharacterAllowed, setPassword])
 
+  const copyPasswordToClipboard = useCallback(() => {
+    passwordRef.current?.select()// to show selected text effect::: one method is setselectionrange(min,max) we can put min and max value to select how much part 
+    window,navigator.clipboard.writeText(password)
+  }, [password])
+
 
   useEffect(()=>{
     password_generator()},
@@ -43,9 +51,11 @@ function App() {
         placeholder='Password'
         className='outline-none w-full py-1 px-3'
         readOnly
+        ref={passwordRef}
         />
         <button
-        className='outline-none bg-blue-800 text-white px-4 py-2 shrink-0'>Copy</button>
+        onClick={copyPasswordToClipboard}
+        className='outline-none bg-blue-800 text-white px-4 py-2 shrink-0 cursor-pointer hover:bg-blue-700'>Copy</button>
         </div>
         <div className='flex text-sm gap-x-4'>
           <div className='flex items-center gap-x-2'>
